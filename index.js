@@ -3,8 +3,6 @@
 const Trailpack = require('trailpack-datastore')
 const lib = require('./lib')
 const _ = require('lodash')
-const Schemator = require('js-data-schema')
-const schemator = new Schemator()
 
 module.exports = class DataTrailpack extends Trailpack {
 
@@ -44,9 +42,6 @@ module.exports = class DataTrailpack extends Trailpack {
     _.each(this.models, (model, modelName) => {
       _.each(this.connections, (connection, name) => {
         if (model.connection == name) {
-          // this.app.orm[model.globalId] = connection.define(modelName, model.schema, model.config)
-          schemator.defineSchema(modelName, model.schema)
-          model.config.name = modelName
           this.app.orm[model.globalId] = connection.defineResource(model.config)
         }
       })

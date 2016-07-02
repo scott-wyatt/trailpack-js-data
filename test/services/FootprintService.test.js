@@ -17,6 +17,7 @@ describe('api.services.FootprintService', () => {
     it('should insert a record with child', () => {
       return FootprintService.create('User', {name: 'userTest', roles: [{name: 'roleTest'}]}, {populate: 'roles'})
         .then(user => {
+          console.log(user)
           assert.equal(user.name, 'userTest')
           assert.equal(user.roles.length, 1)
           assert.equal(user.roles[0].name, 'roleTest')
@@ -46,13 +47,14 @@ describe('api.services.FootprintService', () => {
     it('should find a single record', () => {
       return FootprintService.create('Role', {name: 'findtest'})
         .then(role => {
+          console.log(role)
           assert.equal(role.name, 'findtest')
           assert(role.id)
           return FootprintService.find('Role', role.id)
         })
         .then(role => {
           assert(!role.length)
-          assert.equal(role.dataValues.name, 'findtest')
+          assert.equal(role.name, 'findtest')
         })
     })
     it('should find a set of records', () => {
@@ -91,6 +93,7 @@ describe('api.services.FootprintService', () => {
           )
         })
         .then(results => {
+          console.log(results)
           assert(results[0])
           assert.equal(results[0], 1)
         })

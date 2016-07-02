@@ -29,7 +29,7 @@ describe('lib.Transformer', () => {
     it('should transform properly', () => {
       const connections = lib.Transformer.transformStores(global.app)
       assert(connections.teststore)
-      assert.equal(connections.teststore.adapters.sql.defaults.client, 'sqlite')
+      assert.equal(connections.teststore.dialect, 'sqlite')
     })
   })
 

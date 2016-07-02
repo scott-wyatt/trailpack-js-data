@@ -21,6 +21,7 @@ module.exports = _.defaultsDeep({
 
         static schema(app) {
           return {
+            // id: 'number',
             name: { type: 'string', allowNull: false}
           }
         }
@@ -42,6 +43,7 @@ module.exports = _.defaultsDeep({
       UserProject: class UserProject extends Model {
         static schema(app) {
           return {
+            // id: 'number',
             status: 'string'
           }
         }
@@ -50,7 +52,18 @@ module.exports = _.defaultsDeep({
         static config() {
           return {
             options: {
-
+              relations: {
+                hasMany: {
+                  roles: {
+                    // localField is for linking relations
+                    // user.comments -> array of comments of the user
+                    localField: 'roles',
+                    // foreignKey is the "join" field
+                    // the name of the field on a comment that points to its parent user
+                    foreignKey: 'id'
+                  }
+                }
+              }
             }
           }
         }
