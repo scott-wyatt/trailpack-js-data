@@ -87,7 +87,7 @@ module.exports = class UserService extends Service {
    */
   findUser (email) {
     //More info about queries here: http://www.js-data.io/docs/query-syntaxlatest/docs/models-usage/
-    return this.app.orm.User.find({ where: {email: email} })
+    return this.app.orm.User.find({email: email})
   }
 }
 ```
@@ -114,10 +114,10 @@ information on how our projects are organized and how to get started.
 
 [npm-image]: https://img.shields.io/npm/v/trailpack-js-data.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/trailpack-js-data
-[ci-image]: https://img.shields.io/travis//trailpack-js-data/master.svg?style=flat-square
-[ci-url]: https://travis-ci.org//trailpack-js-data
+[ci-image]: https://img.shields.io/travis/scott-wyatt/trailpack-js-data/master.svg?style=flat-square
+[ci-url]: https://travis-ci.org/scott-wyatt/trailpack-js-data
 [daviddm-image]: http://img.shields.io/david//trailpack-js-data.svg?style=flat-square
 [daviddm-url]: https://david-dm.org//trailpack-js-data
-[codeclimate-image]: https://img.shields.io/codeclimate/github//trailpack-js-data.svg?style=flat-square
-[codeclimate-url]: https://codeclimate.com/github//trailpack-js-data
+[codeclimate-image]: https://img.shields.io/codeclimate/github/scott-wyatt/trailpack-js-data.svg?style=flat-square
+[codeclimate-url]: https://codeclimate.com/github/scott-wyatt/trailpack-js-data
 
