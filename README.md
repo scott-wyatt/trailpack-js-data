@@ -116,8 +116,8 @@ information on how our projects are organized and how to get started.
 [npm-url]: https://npmjs.org/package/trailpack-js-data
 [ci-image]: https://img.shields.io/travis/scott-wyatt/trailpack-js-data/master.svg?style=flat-square
 [ci-url]: https://travis-ci.org/scott-wyatt/trailpack-js-data
-[daviddm-image]: http://img.shields.io/david//trailpack-js-data.svg?style=flat-square
-[daviddm-url]: https://david-dm.org//trailpack-js-data
+[daviddm-image]: http://img.shields.io/david/scott-wyatt/trailpack-js-data.svg?style=flat-square
+[daviddm-url]: https://david-dm.org/scott-wyatt/trailpack-js-data
 [codeclimate-image]: https://img.shields.io/codeclimate/github/scott-wyatt/trailpack-js-data.svg?style=flat-square
 [codeclimate-url]: https://codeclimate.com/github/scott-wyatt/trailpack-js-data
 
