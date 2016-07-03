@@ -7,8 +7,10 @@
 
 Trailpack for js-data ORM
 
-Loads Application Models (in `api/models`) into the js-data ORM; Integrates with [trailpack-router](https://github.com/trailsjs/trailpack-router) to
+Loads Application Models (in `api/models`) into the [js-data](http://www.js-data.io/) ORM; Integrates with [trailpack-router](https://github.com/trailsjs/trailpack-router) to
 generate Footprints for routes.
+
+This ORM works with `sqlite`, `mysql`, `postgres`, `mongodb` and can easily be updated to support even more! Such as `redis` and `rethink`.
 
 ## Install
 
