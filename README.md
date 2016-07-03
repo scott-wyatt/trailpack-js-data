@@ -1,6 +1,7 @@
 # trailpack-js-data
 
 [![NPM version][npm-image]][npm-url]
+[![NPM downloads][npm-download]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![Code Climate][codeclimate-image]][codeclimate-url]
@@ -116,6 +117,7 @@ information on how our projects are organized and how to get started.
 
 [npm-image]: https://img.shields.io/npm/v/trailpack-js-data.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/trailpack-js-data
+[npm-download]: https://img.shields.io/npm/dt/trailpack-js-data.svg
 [ci-image]: https://img.shields.io/travis/scott-wyatt/trailpack-js-data/master.svg?style=flat-square
 [ci-url]: https://travis-ci.org/scott-wyatt/trailpack-js-data
 [daviddm-image]: http://img.shields.io/david/scott-wyatt/trailpack-js-data.svg?style=flat-square
