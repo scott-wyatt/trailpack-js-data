@@ -50,7 +50,7 @@ module.exports = class User extends Model {
     return {
       migrate: 'drop', //override default models configurations if needed
       store: 'sqlite', //override default models configurations if needed
-      //More informations about supported models options here : http://docs.sequelizejs.com/en/latest/docs/models-definition/#configuration
+      //More informations about supported models options here: http://www.js-data.io/docs/relations
       options: {
           relations: {
             hasOne: {
