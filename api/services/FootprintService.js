@@ -87,10 +87,6 @@ module.exports = class FootprintService extends Service {
     if (!Model) {
       return Promise.reject(new ModelError('E_NOT_FOUND', `${modelName} can't be found`))
     }
-    if (modelOptions.populate) {
-      modelOptions.include = this._createIncludeField(Model, modelOptions.populate)
-    }
-    delete modelOptions.populate
 
     let query
     let populate = false
@@ -102,16 +98,16 @@ module.exports = class FootprintService extends Service {
 
     if (!_.isPlainObject(criteria) || modelOptions.findOne === true) {
       if (modelOptions.findOne === true) {
-        this.app.log.error('FIND ONE BY ID', criteria)
+        // this.app.log.error('FIND ONE BY ID', criteria)
         query = Model.find(criteria, modelOptions)
       }
       else {
-        this.app.log.error('FIND ONE BY CRITERIA', criteria)
+        // this.app.log.error('FIND ONE BY CRITERIA', criteria)
         query = Model.find(criteria, modelOptions)
       }
     }
     else {
-      this.app.log.error('FIND ALL',criteria, modelOptions)
+      // this.app.log.error('FIND ALL',criteria, modelOptions)
       // criteria = {where: criteria}
       query = Model.findAll(criteria, modelOptions)
     }
