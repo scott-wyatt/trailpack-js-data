@@ -36,7 +36,7 @@ module.exports = {
 }
 ```
 
-A basic `config/database.js` can be found here : https://github.com/trailsjs/trailpack-js-data/blob/master/archetype/config/database.js
+A basic `config/database.js` can be found here : https://github.com/scott-wyatt/trailpack-js-data/blob/master/archetype/config/database.js
 
 ### Models
 
@@ -66,7 +66,6 @@ module.exports = class User extends Model {
             }
           },
           afterCreate: function(resource, attrs, cb){
-
             cb(null,resource)
           }
         }
@@ -94,8 +93,12 @@ module.exports = class UserService extends Service {
    * }
    */
   findUser (email) {
-    //More info about queries here: http://www.js-data.io/docs/query-syntaxlatest/docs/models-usage/
+    // More info about queries here: http://www.js-data.io/docs/query-syntaxlatest/docs/models-usage/
     return this.app.orm.User.find({email: email})
+  },
+  findUserFootprint (email) {
+    // This ORM can also use footprints!
+    retrun this.app.services.FootprintService.find('User',{email: email}, {findOne: true})
   }
 }
 ```
