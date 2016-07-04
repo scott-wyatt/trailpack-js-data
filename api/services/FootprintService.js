@@ -28,6 +28,16 @@ module.exports = class FootprintService extends Service {
     return this.app.orm[modelName] || this.app.packs['js-data'].orm[modelName]
   }
 
+  _addRelations(model, populate) {
+    if (populate === true || populate === 'all') {
+      return model.loadRelations()
+    }
+
+    const fields = populate.split(',')
+
+    return model.loadRelations(fields)
+  }
+
   /**
    * Create a model, or models. Multiple models will be created if "values" is
    * an array.
@@ -43,23 +53,22 @@ module.exports = class FootprintService extends Service {
     if (!Model) {
       return Promise.reject(new ModelError('E_NOT_FOUND', `${modelName} can't be found`))
     }
+
+    let query
+    let populate = false
+
     if (modelOptions.populate) {
-      modelOptions.include = this._createIncludeField(Model, modelOptions.populate)
+      populate = modelOptions.populate
+      delete modelOptions.populate
     }
-    return Model.create(values, modelOptions).catch(manageError)
-  }
 
-  _createIncludeField(model, populate) {
-    if (populate === true || populate === 'all') return {all: true}
+    query = Model.create(values, modelOptions)
 
-    const fields = populate.split(',')
-    const includes = []
+    if (populate) {
+      this._addRelations(Model, populate)
+    }
 
-    fields.forEach((value, key) => {
-      includes.push(model.loadRelations(value))
-    })
-
-    return includes
+    return query.catch(manageError)
   }
 
   /**
@@ -74,7 +83,7 @@ module.exports = class FootprintService extends Service {
   find(modelName, criteria, options) {
     const Model = this._getModel(modelName)
     const modelOptions = _.defaultsDeep({}, options, _.get(this.app.config, 'footprints.models.options'))
-    let query
+
     if (!Model) {
       return Promise.reject(new ModelError('E_NOT_FOUND', `${modelName} can't be found`))
     }
@@ -83,13 +92,18 @@ module.exports = class FootprintService extends Service {
     }
     delete modelOptions.populate
 
-    // this.app.log.error('ID ATTRIBUTE',Model.idAttribute)
+    let query
+    let populate = false
+
+    if (modelOptions.populate) {
+      populate = modelOptions.populate
+      delete modelOptions.populate
+    }
 
     if (!_.isPlainObject(criteria) || modelOptions.findOne === true) {
       if (modelOptions.findOne === true) {
-        criteria = {where: criteria}
         this.app.log.error('FIND ONE BY ID', criteria)
-        query = Model.find(_.defaults(criteria, modelOptions))
+        query = Model.find(criteria, modelOptions)
       }
       else {
         this.app.log.error('FIND ONE BY CRITERIA', criteria)
@@ -100,6 +114,10 @@ module.exports = class FootprintService extends Service {
       this.app.log.error('FIND ALL',criteria, modelOptions)
       // criteria = {where: criteria}
       query = Model.findAll(criteria, modelOptions)
+    }
+
+    if (populate) {
+      this._addRelations(Model, populate)
     }
 
     return query.catch(manageError)
@@ -119,27 +137,32 @@ module.exports = class FootprintService extends Service {
    */
   update(modelName, criteria, values, options) {
     const Model = this._getModel(modelName)
+
     if (!Model) {
       return Promise.reject(new ModelError('E_NOT_FOUND', `${modelName} can't be found`))
     }
+
     let query
     if (!criteria) {
       criteria = {}
     }
 
     if (_.isPlainObject(criteria)) {
-      this.app.log.error('PLAIN',criteria,values,options)
-      //criteria = {where: criteria}
+      // this.app.log.error('PLAIN',criteria, values, options)
       query = Model.updateAll(criteria, values, options)
+      .then(results => {
+        return Model.findAll(criteria, options)
+      })
     }
     else {
-      // criteria = {
-      //   where: {
-      //     [Model.idAttribute]: criteria
-      //   }
-      // }
-      this.app.log.error('NOT PLAIN',criteria,values,options)
-      query = Model.update(criteria, values, options) //.then(results => results[0])
+      criteria = {
+        [Model.idAttribute]: criteria
+      }
+      // this.app.log.error('NOT PLAIN',criteria, values, options)
+      query = Model.update(criteria, values, options)
+      .then(result => {
+        return Model.find(criteria, options)
+      })
     }
 
     return query.catch(manageError)
@@ -154,18 +177,43 @@ module.exports = class FootprintService extends Service {
    */
   destroy(modelName, criteria, options) {
     const Model = this._getModel(modelName)
-    let query
+
     if (!Model) {
       return Promise.reject(new ModelError('E_NOT_FOUND', `${modelName} can't be found`))
     }
+
+    let query
+    if (!criteria) {
+      criteria = {}
+    }
+
     if (_.isPlainObject(criteria)) {
-      this.app.log.error('DESTROY PLAIN', criteria)
-      // criteria = criteria
+      // this.app.log.error('DESTROY PLAIN', criteria)
+      let results
+      // Find the results we are destroying so they can be returned in a footprint's way
+      Model.findAll(criteria)
+      .then(fResults => {
+        results = fResults
+      })
       query = Model.destroyAll(criteria)
+      .then(dResults => {
+        return results
+      })
     }
     else {
-      this.app.log.error('DESTROY NOT PLAIN', criteria)
-      query = Model.destroy(criteria).then(results => results[0])
+      criteria = {
+        [Model.idAttribute]: criteria
+      }
+      // this.app.log.error('DESTROY NOT PLAIN', criteria)
+      let result
+      Model.find(criteria)
+      .then(fResult => {
+        result = fResult
+      })
+      query = Model.destroy(criteria)
+      .then(dResult => {
+        return result
+      })
     }
 
     return query.catch(manageError)

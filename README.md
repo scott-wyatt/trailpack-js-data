@@ -94,8 +94,20 @@ module.exports = class UserService extends Service {
    */
   findUser (email) {
     // More info about queries here: http://www.js-data.io/docs/query-syntaxlatest/docs/models-usage/
-    return this.app.orm.User.find({email: email})
+    return this.app.orm.User.findAll({email: email})
   },
+  /**
+   * Finds people with the given email with footprints.
+   * @return Promise
+   * @example {
+   *    name: 'Ludwig Beethoven',
+   *    email: 'someemail@email.com',
+   *    favoriteColors: [
+   *      { name: 'yellow', hex: 'ffff00' },
+   *      { name: 'black', hex: '000000' }
+   *     ]
+   * }
+   */
   findUserFootprint (email) {
     // This ORM can also use footprints!
     retrun this.app.services.FootprintService.find('User',{email: email}, {findOne: true})

@@ -56,11 +56,11 @@ module.exports = _.defaultsDeep({
                 hasMany: {
                   roles: {
                     // localField is for linking relations
-                    // user.comments -> array of comments of the user
+                    // user.roles -> array of comments of the user
                     localField: 'roles',
                     // foreignKey is the "join" field
-                    // the name of the field on a comment that points to its parent user
-                    foreignKey: 'id'
+                    // the name of the field on a role that points to its parent user
+                    foreignKey: 'userId'
                   }
                 }
               }
@@ -75,7 +75,8 @@ module.exports = _.defaultsDeep({
               allowNull: false
             },
             password: 'string',
-            displayName: 'string'
+            displayName: 'string',
+            roles: {}
           }
         }
       },
@@ -84,14 +85,23 @@ module.exports = _.defaultsDeep({
           return {
             store: 'storeoverride',
             options: {
-
+              relations: {
+                belongsTo: {
+                  user: {
+                    localField: 'user',
+                    localKey: 'userId'
+                  }
+                }
+              }
             }
           }
         }
 
         static schema(app) {
           return {
-            name: 'string'
+            name: 'string',
+            userId: 'string',
+            user: {}
           }
         }
       },
