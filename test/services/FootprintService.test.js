@@ -48,7 +48,6 @@ describe('api.services.FootprintService', () => {
     it('should find a single record', () => {
       return FootprintService.create('Role', {name: 'findtest'})
         .then(role => {
-          console.log(role)
           assert.equal(role.name, 'findtest')
           assert(role.id)
           return FootprintService.find('Role', role.id)
