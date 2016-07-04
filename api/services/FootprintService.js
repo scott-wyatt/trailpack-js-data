@@ -5,7 +5,7 @@ const Service = require('trails-service')
 const ModelError = require('../../lib').ModelError
 
 const manageError = err => {
-  if (err.name === 'jsDataValidationError') {
+  if (err.name === 'SQLITE_CONSTRAINT' || err.name === 'SQLITE_ERROR') {
     return Promise.reject(new ModelError('E_VALIDATION', err.message, err.errors))
   }
   return Promise.reject(err)

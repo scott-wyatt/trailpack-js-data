@@ -21,8 +21,10 @@ module.exports = _.defaultsDeep({
 
         static schema(app) {
           return {
-            // id: 'number',
-            name: { type: 'string', allowNull: false}
+            name: {
+              type: 'string',
+              allowNull: false
+            }
           }
         }
       },
@@ -43,7 +45,6 @@ module.exports = _.defaultsDeep({
       UserProject: class UserProject extends Model {
         static schema(app) {
           return {
-            // id: 'number',
             status: 'string'
           }
         }
@@ -75,8 +76,7 @@ module.exports = _.defaultsDeep({
               allowNull: false
             },
             password: 'string',
-            displayName: 'string',
-            roles: {}
+            displayName: 'string'
           }
         }
       },
@@ -100,8 +100,7 @@ module.exports = _.defaultsDeep({
         static schema(app) {
           return {
             name: 'string',
-            userId: 'string',
-            user: {}
+            userId: 'string'
           }
         }
       },
