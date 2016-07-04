@@ -14,9 +14,14 @@ generate Footprints for routes.
 This ORM works with `sqlite`, `mysql`, `postgres`, `mongodb` and can easily be updated to support even more! Such as `redis` and `rethink`.
 
 ## Install
-
+with npm:
 ```sh
 $ npm install --save trailpack-js-data
+```
+
+with yo:
+```sh
+$ yo trails:trailpack trailpack-js-data
 ```
 
 ## Configure
