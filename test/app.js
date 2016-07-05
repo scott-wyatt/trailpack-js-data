@@ -53,18 +53,18 @@ module.exports = _.defaultsDeep({
         static config() {
           return {
             options: {
-              relations: {
-                hasMany: {
-                  roles: {
-                    // localField is for linking relations
-                    // user.roles -> array of comments of the user
-                    localField: 'roles',
-                    // foreignKey is the "join" field
-                    // the name of the field on a role that points to its parent user
-                    foreignKey: 'userId'
-                  }
-                }
-              }
+              // relations: {
+              //   hasMany: {
+              //     roles: {
+              //       // localField is for linking relations
+              //       // user.roles -> array of comments of the user
+              //       localField: 'roles',
+              //       // foreignKey is the "join" field
+              //       // the name of the field on a role that points to its parent user
+              //       foreignKey: 'userId'
+              //     }
+              //   }
+              // }
             }
           }
         }
@@ -76,7 +76,53 @@ module.exports = _.defaultsDeep({
               allowNull: false
             },
             password: 'string',
-            displayName: 'string'
+            displayName: 'string',
+            // One to Many
+            roles: {
+              collection: 'Role',
+              via: 'user'
+            },
+            organizations: {
+              collection: 'Organization',
+              via: 'users'
+            },
+            page: {
+              model: 'Page'
+            }
+          }
+        }
+      },
+      Organization: class Organization extends Model {
+        static config() {
+          return {
+            options: {
+              // relations: {
+              //   hasMany: {
+              //     roles: {
+              //       // localField is for linking relations
+              //       // user.roles -> array of comments of the user
+              //       localField: 'roles',
+              //       // foreignKey is the "join" field
+              //       // the name of the field on a role that points to its parent user
+              //       foreignKey: 'userId'
+              //     }
+              //   }
+              // }
+            }
+          }
+        }
+
+        static schema(app) {
+          return {
+            name: {
+              type: 'string'
+            },
+            // Many to Many
+            users: {
+              collection: 'User',
+              via: 'organizations',
+              dominant: true
+            }
           }
         }
       },
@@ -85,22 +131,21 @@ module.exports = _.defaultsDeep({
           return {
             store: 'storeoverride',
             options: {
-              relations: {
-                belongsTo: {
-                  user: {
-                    localField: 'user',
-                    localKey: 'userId'
-                  }
-                }
-              }
+              // relations: {
+              //   belongsTo: {
+              //     user: {
+              //       localField: 'user',
+              //       localKey: 'user'
+              //     }
+              //   }
+              // }
             }
           }
         }
 
         static schema(app) {
           return {
-            name: 'string',
-            userId: 'string'
+            name: 'string'
           }
         }
       },

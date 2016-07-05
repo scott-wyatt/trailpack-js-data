@@ -33,7 +33,7 @@ describe('api.services.FootprintService', () => {
         })
     })
     it('should return a validation error', () => {
-      return FootprintService.create('User', {roles: [{name: 'roleTest'}]}, {populate: 'roles'})
+      return FootprintService.create('User', {}, {populate: 'roles'})
         .catch(err => {
           assert.equal(err.code, 'E_VALIDATION')
           assert.equal(err.message, 'insert into "user" default values - SQLITE_CONSTRAINT: NOT NULL constraint failed: user.name')
