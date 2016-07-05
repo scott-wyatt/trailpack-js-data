@@ -1,3 +1,4 @@
+/* eslint no-console: [0, { allow: ["log","warn", "error"] }] */
 'use strict'
 
 const _ = require('lodash')
@@ -5,8 +6,11 @@ const Service = require('trails-service')
 const ModelError = require('../../lib').ModelError
 
 const manageError = err => {
-  if (err.name === 'SQLITE_CONSTRAINT' || err.name === 'SQLITE_ERROR') {
-    return Promise.reject(new ModelError('E_VALIDATION', err.message, err.errors))
+  if (err.code === 'SQLITE_CONSTRAINT' || err.code === 'SQLITE_ERROR') {
+    return Promise.reject(new ModelError('E_VALIDATION', err.message, err.errors || err))
+  }
+  else if (err.name === 'JSDATA_ERROR') {
+    return Promise.reject(new ModelError('E_VALIDATION', err.message, err.errors || err))
   }
   return Promise.reject(err)
 }

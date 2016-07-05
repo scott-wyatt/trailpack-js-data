@@ -107,37 +107,41 @@ module.exports = _.defaultsDeep({
       ModelCallbacks: class ModelCallbacks extends Model {
         static config() {
           return {
-            options: {
-              beforeCreate: (values, options) => {
-                if (values.dataValues.beforeCreate === 0)
-                  values.beforeCreate += 1
-              },
-              afterCreate: (values, options) => {
-                if (values.dataValues.afterCreate === 0)
-                  values.afterCreate += 1
-              },
-              beforeUpdate: (values, options) => {
-                if (values.dataValues.beforeUpdate === 0)
-                  values.beforeUpdate += 1
-              },
-              afterUpdate: (values, options) => {
-                if (values.dataValues.afterUpdate === 0)
-                  values.afterUpdate += 1
-              },
-              beforeValidate: (values, options) => {
-                if (values.dataValues.beforeValidate === 0)
-                  values.beforeValidate += 1
-              },
-              afterValidate: (values, options) => {
-                if (values.dataValues.afterValidate === 0)
-                  values.afterValidate += 1
-              },
-              beforeDestroy: (values, options) => {
-
-              },
-              afterDestroy: (values, options) => {
-
-              }
+            beforeCreate: (values, next) => {
+              if (values.beforeCreate === 0)
+                values.beforeCreate += 1
+              next(null, values)
+            },
+            afterCreate: (values, next) => {
+              if (values.afterCreate === 0)
+                values.afterCreate += 1
+              next(null, values)
+            },
+            beforeUpdate: (values, next) => {
+              if (values.beforeUpdate === 0)
+                values.beforeUpdate += 1
+              next(null, values)
+            },
+            afterUpdate: (values, next) => {
+              if (values.afterUpdate === 0)
+                values.afterUpdate += 1
+              next(null, values)
+            },
+            beforeValidate: (values, next) => {
+              if (values.beforeValidate === 0)
+                values.beforeValidate += 1
+              next(null, values)
+            },
+            afterValidate: (values, next) => {
+              if (values.afterValidate === 0)
+                values.afterValidate += 1
+              next(null, values)
+            },
+            beforeDestroy: (values, next) => {
+              next(null, values)
+            },
+            afterDestroy: (values, next) => {
+              next(null, values)
             }
           }
         }
