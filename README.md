@@ -64,10 +64,10 @@ module.exports = class User extends Model {
                 foreignKey: 'userId'
               }
             }
-          },
-          afterCreate: function(resource, attrs, cb){
-            cb(null,resource)
           }
+        }
+        afterCreate: function(resource, attrs, cb){
+          cb(null,resource)
         }
       }
     }
