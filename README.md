@@ -57,18 +57,17 @@ module.exports = class User extends Model {
       store: 'sqlite', //override default models configurations if needed
       //More informations about supported models options here: http://www.js-data.io/docs/relations
       options: {
-          relations: {
-            hasOne: {
-              profile: {
-                localField: 'profile',
-                foreignKey: 'userId'
-              }
+        relations: {
+          hasOne: {
+            profile: {
+              localField: 'profile',
+              foreignKey: 'userId'
             }
           }
         }
-        afterCreate: function(resource, attrs, cb){
-          cb(null,resource)
-        }
+      },
+      afterCreate: function(resource, attrs, cb){
+        cb(null,resource)
       }
     }
   }
