@@ -6,6 +6,7 @@ const Service = require('trails-service')
 const ModelError = require('../../lib').ModelError
 
 const manageError = err => {
+  console.log(err)
   if (err.code === 'SQLITE_CONSTRAINT' || err.code === 'SQLITE_ERROR') {
     return Promise.reject(new ModelError('E_VALIDATION', err.message, err.errors || err))
   }
@@ -61,12 +62,17 @@ module.exports = class FootprintService extends Service {
     let query
     let populate = false
 
+    // console.log('CREATING...')
+
     if (modelOptions.populate) {
       populate = modelOptions.populate
       delete modelOptions.populate
     }
 
-    query = Model.create(values, modelOptions)
+    query = Model.create(values, modelOptions).then((result) => {
+      console.log(result)
+      return result
+    })
 
     if (populate) {
       this._addRelations(Model, populate)
@@ -94,6 +100,12 @@ module.exports = class FootprintService extends Service {
 
     let query
     let populate = false
+    if (!criteria) {
+      criteria = {}
+    }
+    if (criteria.where) {
+      criteria = criteria.where
+    }
 
     if (modelOptions.populate) {
       populate = modelOptions.populate
@@ -101,18 +113,40 @@ module.exports = class FootprintService extends Service {
     }
 
     if (!_.isPlainObject(criteria) || modelOptions.findOne === true) {
-      if (modelOptions.findOne === true) {
-        // this.app.log.error('FIND ONE BY ID', criteria)
+      if (criteria[Model.idAttribute]) {
+        console.log('#findOne has id', Model.name, criteria, modelOptions)
+        query = Model.find(criteria[Model.idAttribute], modelOptions)
+        // Conform to Waterline not Found
+        .catch(err => {
+          if (err == '[Error: Not Found!]') {
+            return Promise.resolve(null)
+          }
+          Promise.reject(err)
+        })
+      }
+      else if (!_.isPlainObject(criteria)) {
+        console.log('#findOne has ONLY string id', Model.name, criteria, modelOptions)
         query = Model.find(criteria, modelOptions)
+        // Conform to Waterline not Found
+        .catch(err => {
+          if (err == '[Error: Not Found!]') {
+            return Promise.resolve(null)
+          }
+          Promise.reject(err)
+        })
       }
       else {
-        // this.app.log.error('FIND ONE BY CRITERIA', criteria)
-        query = Model.find(criteria, modelOptions)
+        console.log('#findOne has NO id', Model.name, criteria, modelOptions)
+        query = Model.findAll(criteria, modelOptions)
+        // Conform to Waterline findOne
+        .then(results => {
+          console.log(results)
+          return Promise.resolve(results[0])
+        })
       }
     }
     else {
-      // this.app.log.error('FIND ALL',criteria, modelOptions)
-      // criteria = {where: criteria}
+      console.log('#findAll', Model.name, criteria, modelOptions)
       query = Model.findAll(criteria, modelOptions)
     }
 
@@ -137,6 +171,7 @@ module.exports = class FootprintService extends Service {
    */
   update(modelName, criteria, values, options) {
     const Model = this._getModel(modelName)
+    const modelOptions = _.defaultsDeep({}, options, _.get(this.app.config, 'footprints.models.options'))
 
     if (!Model) {
       return Promise.reject(new ModelError('E_NOT_FOUND', `${modelName} can't be found`))
@@ -146,23 +181,32 @@ module.exports = class FootprintService extends Service {
     if (!criteria) {
       criteria = {}
     }
+    if (criteria.where) {
+      criteria = criteria.where
+    }
 
-    if (_.isPlainObject(criteria)) {
-      // this.app.log.error('PLAIN',criteria, values, options)
-      query = Model.updateAll(criteria, values, options)
+    if (_.isPlainObject(criteria) && criteria[Model.idAttribute]) {
+      console.log('#updateOne PLAIN', Model.name, criteria, values, modelOptions)
+      query = Model.update(criteria[Model.idAttribute], values, modelOptions)
+    }
+    else if (_.isPlainObject(criteria)) {
+      console.log('#updateAll PLAIN', Model.name, criteria, values, modelOptions)
+      query = Model.updateAll(criteria, values, modelOptions)
       .then(results => {
-        return Model.findAll(criteria, options)
+        return Model.findAll(criteria, modelOptions)
       })
     }
     else {
-      criteria = {
-        [Model.idAttribute]: criteria
-      }
-      // this.app.log.error('NOT PLAIN',criteria, values, options)
-      query = Model.update(criteria, values, options)
-      .then(result => {
-        return Model.find(criteria, options)
-      })
+      query = Model.update(criteria, values, modelOptions)
+      // console.log('NOT PLAIN', Model.name, criteria, values, options)
+      // // criteria = {
+      // //   [Model.idAttribute]: criteria
+      // // }
+      // // this.app.log.error('NOT PLAIN',criteria, values, options)
+      // query = Model.update(criteria[Model.idAttribute], values, options)
+      // .then(result => {
+      //   return Model.find(criteria[Model.idAttribute], options)
+      // })
     }
 
     return query.catch(manageError)
@@ -177,6 +221,7 @@ module.exports = class FootprintService extends Service {
    */
   destroy(modelName, criteria, options) {
     const Model = this._getModel(modelName)
+    const modelOptions = _.defaultsDeep({}, options, _.get(this.app.config, 'footprints.models.options'))
 
     if (!Model) {
       return Promise.reject(new ModelError('E_NOT_FOUND', `${modelName} can't be found`))
@@ -186,33 +231,70 @@ module.exports = class FootprintService extends Service {
     if (!criteria) {
       criteria = {}
     }
+    if (criteria.where) {
+      criteria = criteria.where
+    }
 
-    if (_.isPlainObject(criteria)) {
+    if (_.isPlainObject(criteria) && criteria[Model.idAttribute]) {
+      console.log('#destroyOne PLAIN', Model.name, criteria, modelOptions)
+      let result = {}
+      // Find the results we are destroying so they can be returned in a footprint's way
+      Model.find(criteria[Model.idAttribute])
+      .then(fResult => {
+        result = fResult
+      })
+      // Conform to Waterline findOne
+      .catch(err => {
+        if (err == '[Error: Not Found!]') {
+          return Promise.resolve(null)
+        }
+        Promise.reject(err)
+      })
+      query = Model.destroy(criteria[Model.idAttribute])
+      .then(dResults => {
+        return Promise.resolve(result)
+      })
+    }
+    else if (_.isPlainObject(criteria)) {
+      console.log('#destroyAll PLAIN', Model.name, criteria, modelOptions)
       // this.app.log.error('DESTROY PLAIN', criteria)
-      let results
+      let results = []
       // Find the results we are destroying so they can be returned in a footprint's way
       Model.findAll(criteria)
       .then(fResults => {
         results = fResults
       })
+      .catch(err => {
+        if (err == '[Error: Not Found!]') {
+          return Promise.resolve(null)
+        }
+        Promise.reject(err)
+      })
       query = Model.destroyAll(criteria)
       .then(dResults => {
-        return results
+        return Promise.resolve(results)
       })
     }
     else {
-      criteria = {
-        [Model.idAttribute]: criteria
-      }
-      // this.app.log.error('DESTROY NOT PLAIN', criteria)
-      let result
+      // criteria = {
+      //   [Model.idAttribute]: criteria
+      // }
+      // this.app.log.debug
+      console.log('#destroy by id', criteria)
+      let result = {}
       Model.find(criteria)
       .then(fResult => {
         result = fResult
       })
+      .catch(err => {
+        if (err == '[Error: Not Found!]') {
+          return Promise.resolve(null)
+        }
+        Promise.reject(err)
+      })
       query = Model.destroy(criteria)
       .then(dResult => {
-        return result
+        return Promise.resolve(result)
       })
     }
 
