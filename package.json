@@ -35,7 +35,7 @@
     "js-data-mongodb": "^0.7.0",
     "js-data-redis": "^2.3.0",
     "js-data-sql": "^0.11.17",
-    "mocha": "^2.5.1",
+    "mocha": "^3.0.1",
     "smokesignals": "^1.2.2",
     "sqlite3": "^3.1.4",
     "trailpack-core": "^1.0.0",
