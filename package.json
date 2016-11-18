@@ -20,7 +20,7 @@
   ],
   "dependencies": {
     "db-migrate": "^0.10.0-beta.13",
-    "joi": "^9.0.3",
+    "joi": "^10.0.0",
     "js-data": "^2.9.0",
     "js-data-http": "^2.2.2",
     "js-data-schema": "^1.2.5",
