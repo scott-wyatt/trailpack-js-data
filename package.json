@@ -26,7 +26,7 @@
     "js-data-schema": "^1.2.5",
     "knex": "^0.11.7",
     "lodash": "^4.14.0",
-    "trailpack-datastore": "^1.0.2",
+    "trailpack-datastore": "^2.0.0",
     "trails-service": "^1.0.0-beta-2"
   },
   "devDependencies": {
