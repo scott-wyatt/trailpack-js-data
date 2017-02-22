@@ -30,7 +30,7 @@
     "trails-service": "^1.0.0-beta-2"
   },
   "devDependencies": {
-    "eslint": "^3.2.0",
+    "eslint": "^3.16.1",
     "eslint-config-trails": "^2.0.1",
     "js-data-mongodb": "^0.7.0",
     "js-data-redis": "^2.3.0",
